@@ -1,0 +1,153 @@
+#include<iostream.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+#include<dos.h>
+void display();
+int check(int a, int b);
+int drop(int b, char player);
+char place[6][7];
+
+void main(){int com; clrscr();
+	cout<<"\n\t\t\t   ";  char AR[20]="CONNECT FOUR GAME:--";
+	char D;
+	 for(int f=0;f<20;f++){ D=AR[f];
+	 sound(f*D);  //69
+	 cout<<AR[f];
+	 delay(400);
+	 nosound(); }
+	cout<<"\n[PLAYER 1]\t\t\t\t\t\t\t   [PLAYER 2]\n\n\n\nPlayer 2 options:-\n1.Computer [ O[^:^]O ]\n2.Human [>O-I-<]\n";
+	cout<<"\n\n\nENTER YOUR CHOICE:";cin>>com;
+	clrscr();
+	for(int a =0;a <= 5; a++){		//fill place with whitespace
+		for(int b = 0; b<=6; b++)
+			place[a][b] = ' ';
+	}
+	display();
+	int hold;//Will house user row choice
+	int hold2 = 0;//will hold drop value
+	int charsPlaced = 0;//Number of peices dropped so can end game if a draw
+	int gamewon = 0;//Will be changed to true when game is won and will exit while loop and f=false
+	char player = 15;//start as player 2 will change back 2 player 1
+	while(!gamewon){//will stop when game is won, ! means NOT makes the oppisite be checked
+		if(hold2 != -1){//check if there was a error in the last drop
+			if(player == 15){//if player 2 lasted dropped a piece so its player 1s turn
+				cout<<"player 1 drop where?";
+				player = 254;//character of player's piece
+			}
+			else{   if(com==1){ cout<<"  ___\nO[^:^]O Computer's drop: ";
+					    delay(500);}
+			       else	cout<<"player 2 drop where?";
+				player = 15;//char of player piece
+
+			}
+		}
+		int j=1; randomize();
+		while(j){ if(player==15&&com==1)
+		{hold=(random(7)+0);
+		cout<<hold+1;
+		delay(350);  break;
+		}//since player is changed to no:15 eventhough it is human's code
+		//will run untill 'break;'
+			if(charsPlaced == 42) break;//if draw
+			cin>>hold;//get user input
+			hold--;//take off 1 to account for arrays starting at 0 not 1
+			if(hold <=6 && hold>= 0) break;//if within valid range stop loop
+			else cout<< "\nplease enter a value between 1 and 7 :";//ask for input and loop again
+			if (cin.fail())	//catch a non number
+			{						//
+				cin.clear();		//Stops cin trying to put its value in to hold
+				char c;			//Try entering a non number without this, 2 see what this does
+				cin>>c;			//
+			}						//Catch a non number
+
+		}
+		if(charsPlaced == 42) break;//if draw
+		hold2 = drop(hold,player);//drop the player store the row in hold2
+		if(hold2 == -1)	cout<<"Coloum is full\nPlease enter anothor number between [1] and [7]:";//if error -1 row is full
+		else{
+		gamewon = check(hold2,hold);//check if game is run
+			charsPlaced ++;//another character has been succesfully placed
+			clrscr();
+			display();//displayed updated board
+		}
+	}
+	clrscr();//this clears the screen
+	if(charsPlaced == 42){//if draw
+		cout<<"No winner, Game was draw \nBetter luck next time....\n";
+		system("pause");
+		getch();
+	}
+	if(player == 15)// won by player 2
+	 {  if(com!=1)	cout<<"\t\t\t\t"<<"gamewon by : player 2\n";
+	 else   	cout<<"\t\t\t\t"<<"gamewon by : O[^:^]O Computer \n";}
+	else cout<<"\n\t\t\t\tgamewon by : player 1\n";// player 1
+	cout<<endl;
+	for(int i=0;i<12;i++){
+	sound(i*271);
+	delay(500);
+	nosound(); }
+	system("pause");//pauses , so players can see who won
+	getch();
+}
+void display(){
+	cout<<" 1   2   3   4   5   6   7\n";
+	for(int a = 0; a<= 5; a++)
+	{
+		for(int b =0; b <= 6; b++) cout<<char(218)<<char(196)<<char(191)<<" ";
+		cout<<'\n';
+		for( b =0; b <= 6; b++) cout<<char(179)<<place[a][b]<<char(179)<<" ";
+		cout<<'\n';
+		for( b =0; b <= 6; b++) cout<<char(192)<<char(196)<<char(217)<<" ";
+		cout<<'\n';
+	}
+}
+int check(int a, int b){
+	int vertical = 1;
+	int horizontal = 1;
+	int diagonal1 = 1;//(\)
+	int diagonal2 = 1;//(/)
+	char player = place[a][b];
+	int i;//vertical
+	int ii;//horizontal
+	//check for vertical(|)
+	for(i = a +1;place[i][b] == player && i <= 5;i++,vertical++);//Check down
+	for(i = a -1;place[i][b] == player && i >= 0;i--,vertical++);//Check up
+	if(vertical >= 4)return 1;
+	//check for horizontal(-)
+	for(ii = b -1;place[a][ii] == player && ii >= 0;ii--,horizontal++);//Check left
+	for(ii = b +1;place[a][ii] == player && ii <= 6;ii++,horizontal++);//Check right
+	if(horizontal >= 4) return 1;
+	//check for diagonal [MAIN] (\)
+	for(i = a -1, ii= b -1;place[i][ii] == player && i>=0 && ii >=0; diagonal1 ++, i --, ii --);//up and left
+	for(i = a +1, ii = b+1;place[i][ii] == player && i<=5 && ii <=6;diagonal1 ++, i ++, ii ++);//down and right
+	if(diagonal1 >= 4) return 1;
+	//check for diagonal [SECONDARY] (/)
+	for(i = a -1, ii= b +1;place[i][ii] == player && i>=0 && ii <= 6; diagonal2 ++, i --, ii ++);//up and right
+	for(i = a +1, ii= b -1;place[i][ii] == player && i<=5 && ii >=0; diagonal2 ++, i ++, ii --);//up and left
+	if(diagonal2 >= 4) return 1;
+	return 0;
+}
+int drop(int b, char player){
+	if(b >=0 && b<= 6)
+	{
+		if(place[0][b] == ' '){
+			int i;
+			for(i = 0;place[i][b] == ' ';i++)
+				if(i == 5){place[i][b] = player;
+			return i;}
+			i--;
+			place[i][b] =player;
+			return i;
+
+		}
+		else{
+			return -1;
+		}
+
+	}
+	else{
+		return -1;
+	}
+
+}
