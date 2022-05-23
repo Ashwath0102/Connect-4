@@ -13,3 +13,9 @@ Algorithm:
 8. If all columns are filled, the match is a tie.
 9. Finally, the winning player is shown.
 10. End
+
+
+Sample Output:
+
+![image](https://user-images.githubusercontent.com/59199696/169810709-f06a904c-ba85-4860-9220-64e36cc41126.png)
+
